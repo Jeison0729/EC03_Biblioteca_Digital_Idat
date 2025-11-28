@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Evaluaciones - Biblioteca Digital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+        }
+        
+        .evaluacion-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .evaluacion-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stars {
+            color: #ffc107;
+            font-size: 1.2rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        
+        .empty-state i {
+            font-size: 6rem;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .fecha-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-book-reader me-2"></i>Biblioteca Digital
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mis-reservas">
+                            <i class="fas fa-bookmark me-1"></i>Mis Reservas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/mis-evaluaciones">
+                            <i class="fas fa-star me-1"></i>Mis Evaluaciones
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" href="/admin/evaluaciones">
+                            <i class="fas fa-cog me-1"></i>Administrar
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span sec:authentication="principal.nombreCompleto">Usuario</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    <span sec:authentication="principal.correo"></span>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="display-5 fw-bold">
+                <i class="fas fa-star me-3"></i>Mis Evaluaciones
+            </h1>
+            <p class="lead mb-0">Revisa las evaluaciones que has realizado</p>
+        </div>
+    </div>
+
+    <!-- Evaluaciones Section -->
+    <div class="container mb-5">
+        <!-- Lista de evaluaciones -->
+        <div class="row" id="evaluacionesList">
+            <!-- Se llenará dinámicamente con JavaScript -->
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state d-none" id="emptyState">
+            <i class="fas fa-star"></i>
+            <h3 class="text-muted">No has realizado evaluaciones</h3>
+            <p class="text-muted mb-4">Evalúa los libros que has devuelto para compartir tu experiencia</p>
+            <a href="/mis-reservas" class="btn btn-lg" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); border: none; color: white;">
+                <i class="fas fa-bookmark me-2"></i>Ver Mis Reservas
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarEvaluaciones();
+        });
+        
+        async function cargarEvaluaciones() {
+            try {
+                const response = await fetch('/api/evaluaciones');
+                
+                if (!response.ok) {
+                    throw new Error('Error al cargar evaluaciones');
+                }
+                
+                const evaluaciones = await response.json();
+                mostrarEvaluaciones(evaluaciones);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('emptyState').classList.remove('d-none');
+            }
+        }
+        
+        function mostrarEvaluaciones(evaluaciones) {
+            const container = document.getElementById('evaluacionesList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (!evaluaciones || evaluaciones.length === 0) {
+                emptyState.classList.remove('d-none');
+                return;
+            }
+            
+            container.innerHTML = evaluaciones.map(evaluacion => `
+                <div class="col-12">
+                    <div class="card evaluacion-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="stars">
+                                    ${generarEstrellas(evaluacion.puntaje)}
+                                </div>
+                                <span class="fecha-text">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    ${formatearFecha(evaluacion.fechaRegistro)}
+                                </span>
+                            </div>
+                            <p class="mb-0">${evaluacion.comentario}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function generarEstrellas(puntaje) {
+            let estrellas = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= puntaje) {
+                    estrellas += '<i class="fas fa-star"></i>';
+                } else {
+                    estrellas += '<i class="far fa-star"></i>';
+                }
+            }
+            return estrellas;
+        }
+        
+        function formatearFecha(fecha) {
+            const date = new Date(fecha);
+            return date.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    </script>
+</body>
+</html>

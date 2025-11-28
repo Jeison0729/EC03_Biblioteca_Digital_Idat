@@ -1,0 +1,19 @@
+create database biblioteca_digital;
+USE  biblioteca_digital;
+
+INSERT INTO `biblioteca_digital`.`rol_entity` (`descripcion`) VALUES ('ROLE_USER');
+INSERT INTO `biblioteca_digital`.`rol_entity` (`descripcion`) VALUES ('ROLE_ADMIN');
+
+
+
+INSERT INTO libro_entity (titulo, autor, isbn, anio_publicacion, cantidad_disponible) VALUES
+('Cien años de soledad', 'Gabriel García Márquez', '978-0307474728', 1967, 5),
+('Don Quijote de la Mancha', 'Miguel de Cervantes', '978-8420412146', 1605, 3),
+('1984', 'George Orwell', '978-0451524935', 1949, 4),
+('El Principito', 'Antoine de Saint-Exupéry', '978-0156012195', 1943, 6),
+('Crimen y Castigo', 'Fiódor Dostoyevski', '978-0486415871', 1866, 2),
+('El Señor de los Anillos', 'J.R.R. Tolkien', '978-0618640157', 1954, 4),
+('Harry Potter y la Piedra Filosofal', 'J.K. Rowling', '978-0439708180', 1997, 7),
+('Orgullo y Prejuicio', 'Jane Austen', '978-0141439518', 1813, 3),
+('La Odisea', 'Homero', '978-0140268867', -800, 2),
+('Fundación', 'Isaac Asimov', '978-0553293357', 1951, 5);

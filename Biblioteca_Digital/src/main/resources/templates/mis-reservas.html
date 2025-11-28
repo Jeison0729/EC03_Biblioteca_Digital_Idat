@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Reservas - Biblioteca Digital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+        }
+        
+        .reserva-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .reserva-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .libro-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+        }
+        
+        .btn-devolver {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-devolver:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+        
+        .btn-evaluar {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-evaluar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+        
+        .estado-badge {
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        
+        .empty-state i {
+            font-size: 6rem;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-book-reader me-2"></i>Biblioteca Digital
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/mis-reservas">
+                            <i class="fas fa-bookmark me-1"></i>Mis Reservas
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" href="/admin/libros">
+                            <i class="fas fa-cog me-1"></i>Administrar
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span sec:authentication="principal.nombreCompleto">Usuario</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    <span sec:authentication="principal.correo"></span>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="display-5 fw-bold">
+                <i class="fas fa-bookmark me-3"></i>Mis Reservas
+            </h1>
+            <p class="lead mb-0">Administra tus libros reservados</p>
+        </div>
+    </div>
+
+    <!-- Reservas Section -->
+    <div class="container mb-5">
+        <!-- Lista de reservas -->
+        <div class="row" th:if="${reservas != null and !reservas.empty}">
+            <div class="col-12" th:each="reserva : ${reservas}">
+                <div class="card reserva-card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center mb-3 mb-md-0">
+                                <i class="fas fa-book libro-icon"></i>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <h4 class="fw-bold mb-2" th:text="${reserva.tituloLibro}">Título del Libro</h4>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-user me-2"></i>
+                                    <strong>Autor:</strong> <span th:text="${reserva.autorLibro}">Autor</span>
+                                </p>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    <strong>Fecha de reserva:</strong> 
+                                    <span th:text="${#temporals.format(reserva.fechaReserva, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</span>
+                                </p>
+                                <p class="text-muted mb-0" th:if="${reserva.fechaDevolucion != null}">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong>Fecha de devolución:</strong> 
+                                    <span th:text="${#temporals.format(reserva.fechaDevolucion, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</span>
+                                </p>
+                            </div>
+                            
+                            <div class="col-md-4 text-center text-md-end">
+                                <span class="estado-badge bg-success text-white d-inline-block mb-3" 
+                                      th:if="${reserva.estado.name() == 'ACTIVA'}">
+                                    <i class="fas fa-clock me-1"></i>Activa
+                                </span>
+                                <span class="estado-badge bg-info text-white d-inline-block mb-3" 
+                                      th:if="${reserva.estado.name() == 'DEVUELTA'}">
+                                    <i class="fas fa-check-circle me-1"></i>Devuelta
+                                </span>
+                                
+                                <div th:if="${reserva.estado.name() == 'ACTIVA'}">
+                                    <button class="btn btn-devolver w-100 mb-2" 
+                                            th:attr="data-reserva-id=${reserva.idReserva}, data-libro-titulo=${reserva.tituloLibro}"
+                                            onclick="devolverLibro(this)">
+                                        <i class="fas fa-undo me-2"></i>Devolver Libro
+                                    </button>
+                                </div>
+                                
+                                <div th:if="${reserva.estado.name() == 'DEVUELTA'}">
+                                    <button class="btn btn-evaluar w-100" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#evaluarModal"
+                                            th:attr="data-libro-titulo=${reserva.tituloLibro}">
+                                        <i class="fas fa-star me-2"></i>Evaluar Experiencia
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" th:if="${reservas == null or reservas.empty}">
+            <i class="fas fa-bookmark"></i>
+            <h3 class="text-muted">No tienes reservas activas</h3>
+            <p class="text-muted mb-4">Explora nuestro catálogo y reserva tu primer libro</p>
+            <a href="/" class="btn btn-lg" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); border: none; color: white;">
+                <i class="fas fa-book me-2"></i>Ver Catálogo
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal Evaluar -->
+    <div class="modal fade" id="evaluarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-star text-warning me-2"></i>Evaluar Experiencia
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="evaluacionForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Libro:</label>
+                            <p id="libroTituloEvaluar" class="text-muted">-</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="puntaje" class="form-label fw-bold">Puntaje (1-5 estrellas)</label>
+                            <select class="form-select" id="puntaje" name="puntaje" required>
+                                <option value="">Selecciona un puntaje</option>
+                                <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+                                <option value="4">⭐⭐⭐⭐ Muy Bueno</option>
+                                <option value="3">⭐⭐⭐ Bueno</option>
+                                <option value="2">⭐⭐ Regular</option>
+                                <option value="1">⭐ Malo</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="comentario" class="form-label fw-bold">Comentario</label>
+                            <textarea class="form-control" 
+                                      id="comentario" 
+                                      name="comentario" 
+                                      rows="4" 
+                                      maxlength="500"
+                                      placeholder="Comparte tu experiencia con este libro..."
+                                      required></textarea>
+                            <small class="text-muted">Máximo 500 caracteres</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-evaluar" onclick="enviarEvaluacion()">
+                        <i class="fas fa-paper-plane me-2"></i>Enviar Evaluación
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="toastNotification" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                <strong class="me-auto">Biblioteca Digital</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                Mensaje
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function devolverLibro(button) {
+            const reservaId = button.getAttribute('data-reserva-id');
+            const libroTitulo = button.getAttribute('data-libro-titulo');
+            
+            if (!confirm('¿Estás seguro de que deseas devolver el libro "' + libroTitulo + '"?')) {
+                return;
+            }
+            
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Devolviendo...';
+            
+            try {
+                const response = await fetch('/api/reservas/' + reservaId, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showToast('¡Libro devuelto exitosamente!');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    const error = await response.text();
+                    alert('Error: ' + error);
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-undo me-2"></i>Devolver Libro';
+                }
+            } catch (error) {
+                alert('Error de conexión. Por favor, intenta nuevamente.');
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-undo me-2"></i>Devolver Libro';
+            }
+        }
+        
+        // Configurar modal de evaluación
+        const evaluarModal = document.getElementById('evaluarModal');
+        evaluarModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const libroTitulo = button.getAttribute('data-libro-titulo');
+            document.getElementById('libroTituloEvaluar').textContent = libroTitulo;
+        });
+        
+        async function enviarEvaluacion() {
+            const puntaje = document.getElementById('puntaje').value;
+            const comentario = document.getElementById('comentario').value.trim();
+            
+            if (!puntaje || !comentario) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/evaluaciones', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        puntaje: parseInt(puntaje),
+                        comentario: comentario
+                    })
+                });
+                
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(evaluarModal).hide();
+                    document.getElementById('evaluacionForm').reset();
+                    showToast('¡Gracias por tu evaluación!');
+                } else {
+                    const error = await response.text();
+                    alert('Error: ' + error);
+                }
+            } catch (error) {
+                alert('Error de conexión. Por favor, intenta nuevamente.');
+            }
+        }
+        
+        function showToast(message) {
+            const toastElement = document.getElementById('toastNotification');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    </script>
+</body>
+</html>

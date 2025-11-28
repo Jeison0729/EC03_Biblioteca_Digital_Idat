@@ -1,0 +1,403 @@
+{
+	"info": {
+		"_postman_id": "7c6fce7e-8a87-4e4f-b307-6c929222d447",
+		"name": "TAREAS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43792032"
+	},
+	"item": [
+		{
+			"name": "EVC03 Registrar Usuario",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"correo\": \"carlos@biblio.com\",\r\n  \"password\": \"123456\",\r\n  \"nombreCompleto\": \"Carlos Mendoza\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9093/api/auth/registro",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"auth",
+						"registro"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVC03 Ingresar como Usuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"correo\": \"carlos@biblio.com\",\r\n  \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9093/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVC03 Generar Reserva",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJjb3JyZW8iOiJjYXJsb3NAYmlibGlvLmNvbSIsIm5vbWJyZUNvbXBsZXRvIjoiQ2FybG9zIFZhbGRlcnJhbWEiLCJ1c3VhcmlvSWQiOjEsInN1YiI6ImNhcmxvc0BiaWJsaW8uY29tIiwiaWF0IjoxNzY0MzY2Njk5LCJleHAiOjE3NjQ0MDI2OTl9.1a8XbSZss0Y_WoWD1m6WDD81N81ySbYPZLZCOGAYTBU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"libroId\": 5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9093/api/reservas?autho",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"reservas"
+					],
+					"query": [
+						{
+							"key": "autho",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVC03 Hacer Evaluacion",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJjb3JyZW8iOiJjYXJsb3NAYmlibGlvLmNvbSIsIm5vbWJyZUNvbXBsZXRvIjoiQ2FybG9zIFZhbGRlcnJhbWEiLCJ1c3VhcmlvSWQiOjEsInN1YiI6ImNhcmxvc0BiaWJsaW8uY29tIiwiaWF0IjoxNzY0MzY2Njk5LCJleHAiOjE3NjQ0MDI2OTl9.1a8XbSZss0Y_WoWD1m6WDD81N81ySbYPZLZCOGAYTBU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"comentario\": \"Excelente servicio de biblioteca\",\r\n  \"puntaje\": 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9093/api/evaluaciones",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"evaluaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVC03 Consultar Evaluacion",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJjb3JyZW8iOiJjYXJsb3NAYmlibGlvLmNvbSIsIm5vbWJyZUNvbXBsZXRvIjoiQ2FybG9zIE1lbmRvemEiLCJ1c3VhcmlvSWQiOjEsInN1YiI6ImNhcmxvc0BiaWJsaW8uY29tIiwiaWF0IjoxNzY0MzEwNjg2LCJleHAiOjE3NjQzNDY2ODZ9.4XqtPwf1hK6IGuiLbf4a8cM_R0caHulfKhsPN7KYqvc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"comentario\": \"Excelente servicio de biblioteca\",\r\n  \"puntaje\": 5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9093/api/evaluaciones",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"evaluaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVC03 Consultar Reservas",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJjb3JyZW8iOiJjYXJsb3NAYmlibGlvLmNvbSIsIm5vbWJyZUNvbXBsZXRvIjoiQ2FybG9zIE1lbmRvemEiLCJ1c3VhcmlvSWQiOjEsInN1YiI6ImNhcmxvc0BiaWJsaW8uY29tIiwiaWF0IjoxNzY0MzEwMTAzLCJleHAiOjE3NjQzNDYxMDN9.SE6qTpEoXvWvYcEob5wnXindQLQyD_0dIAkOxRVZc5A",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9093/api/reservas/mis",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"reservas",
+						"mis"
+					],
+					"query": [
+						{
+							"key": "autho",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVC03 Devolver Reserva",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJjb3JyZW8iOiJjYXJsb3NAYmlibGlvLmNvbSIsIm5vbWJyZUNvbXBsZXRvIjoiQ2FybG9zIE1lbmRvemEiLCJ1c3VhcmlvSWQiOjEsInN1YiI6ImNhcmxvc0BiaWJsaW8uY29tIiwiaWF0IjoxNzY0MzE0MDk0LCJleHAiOjE3NjQzNTAwOTR9.MxS8AZxZnIlHWRpv-dlR1sDdkX5uuXdN0gcQu6gbtqo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9093/api/reservas/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"reservas",
+						"1"
+					],
+					"query": [
+						{
+							"key": "autho",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVC03 Crear Admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"correo\": \"admin@biblio.com\",\r\n  \"password\": \"admin123\",\r\n  \"nombreCompleto\": \"Nacho Vidal\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9093/api/auth/registro",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"auth",
+						"registro"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVC03 Ingresar como Admin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJjb3JyZW8iOiJhZG1pbkBiaWJsaW8uY29tIiwibm9tYnJlQ29tcGxldG8iOiJOYWNobyBWaWRhbCIsInVzdWFyaW9JZCI6MSwic3ViIjoiYWRtaW5AYmlibGlvLmNvbSIsImlhdCI6MTc2NDMxMjg1MiwiZXhwIjoxNzY0MzQ4ODUyfQ.fGovjkMhPFMAayWamH0c8MN_nIaNs-6xPTJv1i61Zsc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"correo\": \"admin@biblio.com\",\r\n  \"password\": \"admin123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9093/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVC03 Consultar Libros",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJjb3JyZW8iOiJhZG1pbkBiaWJsaW8uY29tIiwibm9tYnJlQ29tcGxldG8iOiJOYWNobyBWaWRhbCIsInVzdWFyaW9JZCI6MSwic3ViIjoiYWRtaW5AYmlibGlvLmNvbSIsImlhdCI6MTc2NDMxMjg1MiwiZXhwIjoxNzY0MzQ4ODUyfQ.fGovjkMhPFMAayWamH0c8MN_nIaNs-6xPTJv1i61Zsc",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:9093/api/libros",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"libros"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVC03 Registrar Libros",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJjb3JyZW8iOiJhZG1pbkBiaWJsaW8uY29tIiwibm9tYnJlQ29tcGxldG8iOiJOYWNobyBWaWRhbCIsInVzdWFyaW9JZCI6MSwic3ViIjoiYWRtaW5AYmlibGlvLmNvbSIsImlhdCI6MTc2NDMxMjg1MiwiZXhwIjoxNzY0MzQ4ODUyfQ.fGovjkMhPFMAayWamH0c8MN_nIaNs-6xPTJv1i61Zsc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"titulo\": \"El señor de los anillos\",\r\n  \"autor\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"978-8445000666\",\r\n  \"anioPublicacion\": 1954,\r\n  \"cantidadDisponible\": 7\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9093/api/libros",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9093",
+					"path": [
+						"api",
+						"libros"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
